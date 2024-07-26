@@ -55,7 +55,7 @@ jobs:
 
       - name: Install ShellCheck and ShellSpec
         run: |
-          sudo apt-get update && sudo apt-get install -y shellcheck git curl
+          sudo apt-get update && sudo apt-get install -y shellcheck git curl kcov
           curl -fsSL https://git.io/shellspec | sh -s -- --yes && ln -s /root/.local/lib/shellspec/shellspec /usr/local/bin/
 
       - name: Run ShellCheck
@@ -80,5 +80,7 @@ jobs:
           ls -l >> $GITHUB_STEP_SUMMARY
           shellspec --init >> $GITHUB_STEP_SUMMARY
           chmod +x $SCRIPT_FILE >> $GITHUB_STEP_SUMMARY
-          shellspec >> $GITHUB_STEP_SUMMARY
+          shellspec -s bash --kcov >> $GITHUB_STEP_SUMMARY
+          COVERAGE=$(shellspec -s bash --kcov | grep 'Code covered' | sed 's/.*covered: \([0-9]*\)\.[0-9]*%.*/\1/g')
+          if (( $COVERAGE < 70 )); then exit 1; fi
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
