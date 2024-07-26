@@ -23,13 +23,13 @@ jobs:
         with:
           list-files: json
           filters: |
-            scripts:
+            changed:
               - '*_script*/**'
 
       - name: Extract changed files
         id: changes
         run: |
-          changed_scripts=$(echo "${{ steps.filter.outputs.scripts }}" | jq -r '.[]')
+          changed_scripts=$(echo "${{ steps.filter.outputs.changed_files }}" | jq -r '.[]')
           echo "changed_scripts=${changed_scripts}" >> $GITHUB_OUTPUT
 
   lint-and-test:
