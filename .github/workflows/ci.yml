@@ -12,7 +12,7 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      changed_scripts: ${{ steps.filter.outputs.changed_scripts }}
+      changed_scripts: ${{ steps.changes.outputs.changed_scripts }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -31,17 +31,16 @@ jobs:
         env:
           changed: ${{ steps.filter.outputs.changed_files }}
         run: |
-          changed_scripts="$( echo $changed | jq -r '.[]' | cut -d'/' -f1 | sort | uniq | jq -s -R -c 'split("\n") | map(select(. != ""))')"
+          changed_scripts="$( echo $changed | jq -r '.[]' | cut -d'/' -f1 | sort | uniq | jq -s -R -c 'split("\n") | map(select(. != ""))' )"
           echo "changed_scripts=${changed_scripts}" >> $GITHUB_OUTPUT
 
   lint-and-test:
     needs: detect-changes
-    runs-on: ubuntu-latest
     if: needs.detect-changes.outputs.changed_scripts != '[]'
     strategy:
       matrix:
         changed_script: ${{ fromJSON(needs.detect-changes.outputs.changed_scripts) }}
-
+    runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
