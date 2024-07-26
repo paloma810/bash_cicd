@@ -37,7 +37,7 @@ jobs:
     if: needs.detect-changes.outputs.changed_scripts != '[]'
     strategy:
       matrix:
-        script_path: [fromJson(needs.detect-changes.outputs.changed_scripts)]
+        script_path: ${{ fromJson(needs.detect-changes.outputs.changed_scripts) }}
 
     steps:
       - name: Check out the repository
