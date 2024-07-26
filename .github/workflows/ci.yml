@@ -65,8 +65,8 @@ jobs:
           echo "# ShellCheck Result" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           shellcheck --format=gcc --severity=error ${{ matrix.changed_script }} >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           shellcheck --format=gcc --severity=error ${{ matrix.changed_script }} | grep 'error' && exit 1
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Run ShellSpec
         run: |
