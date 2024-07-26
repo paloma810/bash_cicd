@@ -28,8 +28,10 @@ jobs:
 
       - name: Extract changed files
         id: changes
+        env:
+          changed: ${{ steps.filter.outputs.changed_files }}
         run: |
-          changed_scripts="$( echo ${{ steps.filter.outputs.changed_files }} | jq -r '.[]' | cut -d'/' -f1 | sort | uniq | jq -s -R -c 'split("\n") | map(select(. != ""))')"
+          changed_scripts="$( echo $changed | jq -r '.[]' | cut -d'/' -f1 | sort | uniq | jq -s -R -c 'split("\n") | map(select(. != ""))')"
           echo "changed_scripts=${changed_scripts}" >> $GITHUB_OUTPUT
 
   lint-and-test:
