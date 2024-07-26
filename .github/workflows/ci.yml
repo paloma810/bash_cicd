@@ -62,10 +62,15 @@ jobs:
         if: ${{ !contains(matrix.script_path, '_spec') }}
         run: |
           echo "shell: $0"
+          echo "# pwd ls" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          pwd >> $GITHUB_STEP_SUMMARY
+          ls -l >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+          echo "shell: $0"
           echo "# ShellCheck Result" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          pwd >>  >> $GITHUB_STEP_SUMMARY
-          ls -l >> $GITHUB_STEP_SUMMARY
           shellcheck --format=gcc --severity=error ${{ matrix.changed_script }} >> $GITHUB_STEP_SUMMARY
           shellcheck --format=gcc --severity=error ${{ matrix.changed_script }} | grep 'error' && exit 1 >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
