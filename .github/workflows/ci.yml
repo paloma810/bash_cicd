@@ -76,8 +76,6 @@ jobs:
           SCRIPT_DIR=$(echo ${{ matrix.changed_script }} | cut -d'/' -f1)
           SCRIPT_FILE=$(basename ${{ matrix.changed_script }} | sed "s/_spec//g")
           cd $SCRIPT_DIR
-          pwd >> $GITHUB_STEP_SUMMARY
-          ls -l >> $GITHUB_STEP_SUMMARY
           shellspec --init >> $GITHUB_STEP_SUMMARY
           chmod +x $SCRIPT_FILE >> $GITHUB_STEP_SUMMARY
           shellspec -s bash --kcov >> $GITHUB_STEP_SUMMARY
