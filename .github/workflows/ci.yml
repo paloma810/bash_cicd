@@ -1,4 +1,4 @@
-name: bash-ci
+name: CI
 
 on:
   push:
@@ -30,5 +30,19 @@ jobs:
         id: set-output
         run: |
           echo "changed_scripts=$(echo ${{ steps.filter.outputs.scripts }})" >> $GITHUB_ENV
-          echo $GITHUB_ENV
 
+  lint-and-test:
+    needs: detect-changes
+    runs-on: ubuntu-latest
+    if: needs.detect-changes.outputs.changed_scripts != '[]'
+    strategy:
+      matrix:
+        script_path: [${{ fromJson(needs.detect-changes.outputs.changed_scripts) }}]
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: echo target
+        run: |
+          echo ${{ matrix.script_path }} 
