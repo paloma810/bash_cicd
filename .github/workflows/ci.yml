@@ -32,6 +32,7 @@ jobs:
           changed: ${{ steps.filter.outputs.changed_files }}
         run: |
           changed_scripts="$( echo $changed | jq -r '.[]' | jq -s -R -c 'split("\n") | map(select(. != ""))' )"
+          echo "changed_scripts=${changed_scripts}"
           echo "changed_scripts=${changed_scripts}" >> $GITHUB_OUTPUT
 
   lint-and-test:
@@ -56,5 +57,5 @@ jobs:
       - name: Run ShellCheck
         if: ${{ !contains(matrix.script_path, '_spec') }}
         run: |
-          shellcheck --format=gcc --severity=error ${{ matrix.script_path }}
-          shellcheck --format=gcc --severity=error ${{ matrix.script_path }} | grep 'error' && exit 1
+          shellcheck --format=gcc --severity=error ${{ matrix.changed_script }}
+          shellcheck --format=gcc --severity=error ${{ matrix.changed_script }} | grep 'error' && exit 1
