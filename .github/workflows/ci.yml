@@ -1,0 +1,34 @@
+name: bash-ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed_scripts: ${{ steps.filter.outputs.changed_scripts }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Filter changed scripts
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            scripts:
+              - '**/*.sh'
+          restore: true
+
+      - name: Set changed scripts output
+        id: set-output
+        run: |
+          echo "changed_scripts=$(echo ${{ steps.filter.outputs.scripts }})" >> $GITHUB_ENV
+          echo $GITHUB_ENV
+
