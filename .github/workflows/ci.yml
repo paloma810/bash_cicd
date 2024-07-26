@@ -32,10 +32,10 @@ jobs:
           changed: ${{ steps.filter.outputs.changed_files }}
         run: |
           echo "shell: $0"
-          echo "# Result" >> $GITHUB_STEP_SUMMARY
+          echo "# Changed Files" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           changed_scripts="$( echo $changed | jq -r '.[]' | jq -s -R -c 'split("\n") | map(select(. != ""))' )"
-          echo "changed_scripts=${changed_scripts}" >> $GITHUB_STEP_SUMMARY
+          echo "${changed_scripts}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "changed_scripts=${changed_scripts}" >> $GITHUB_OUTPUT
 
@@ -55,19 +55,17 @@ jobs:
 
       - name: Install ShellCheck and ShellSpec
         run: |
-          echo "shell: $0"
-          echo "# Result" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          sudo apt-get update && sudo apt-get install -y shellcheck git curl >> $GITHUB_STEP_SUMMARY
-          curl -fsSL https://git.io/shellspec | sh -s -- --yes && ln -s /root/.local/lib/shellspec/shellspec /usr/local/bin/ >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          sudo apt-get update && sudo apt-get install -y shellcheck git curl
+          curl -fsSL https://git.io/shellspec | sh -s -- --yes && ln -s /root/.local/lib/shellspec/shellspec /usr/local/bin/
 
       - name: Run ShellCheck
         if: ${{ !contains(matrix.script_path, '_spec') }}
         run: |
           echo "shell: $0"
-          echo "# Result" >> $GITHUB_STEP_SUMMARY
+          echo "# ShellCheck Result" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          pwd >>  >> $GITHUB_STEP_SUMMARY
+          ls -l >> $GITHUB_STEP_SUMMARY
           shellcheck --format=gcc --severity=error ${{ matrix.changed_script }} >> $GITHUB_STEP_SUMMARY
           shellcheck --format=gcc --severity=error ${{ matrix.changed_script }} | grep 'error' && exit 1 >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
