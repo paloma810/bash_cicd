@@ -15,21 +15,22 @@ jobs:
       changed_scripts: ${{ steps.filter.outputs.changed_scripts }}
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Filter changed scripts
         id: filter
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         with:
+          list-files: json
           filters: |
             scripts:
-              - '**/*.sh'
-          restore: true
+              - '*_script*/**'
 
-      - name: Set changed scripts output
-        id: set-output
+      - name: Extract changed files
+        id: changes
         run: |
-          echo "changed_scripts=$(echo ${{ steps.filter.outputs.scripts }})" >> $GITHUB_ENV
+          changed_scripts=$(echo "${{ steps.filter.outputs.scripts }}" | jq -r '.[]')
+          echo "changed_scripts=${changed_scripts}" >> $GITHUB_OUTPUT
 
   lint-and-test:
     needs: detect-changes
@@ -37,7 +38,7 @@ jobs:
     if: needs.detect-changes.outputs.changed_scripts != '[]'
     strategy:
       matrix:
-        script_path: ${{ fromJson(needs.detect-changes.outputs.changed_scripts) }}
+        changed_script: ${{ fromJSON(needs.detect-changes.outputs.changed_scripts) }}
 
     steps:
       - name: Check out the repository
@@ -45,4 +46,4 @@ jobs:
 
       - name: echo target
         run: |
-          echo ${{ matrix.script_path }} 
+          echo ${{ matrix.changed_script }} 
