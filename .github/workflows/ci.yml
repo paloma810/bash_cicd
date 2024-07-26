@@ -72,9 +72,9 @@ jobs:
         run: |
           SCRIPT_DIR=$(echo ${{ matrix.changed_script }} | cut -d'/' -f1)
           SCRIPT_FILE=$(basename ${{ matrix.changed_script }} | sed "s/_spec//g")
-          cd $(echo ${{ matrix.changed_script }} | cut -d'/' -f1)
+          cd $SCRIPT_DIR
           shellspec --init
-          chmod +x ${{ matrix.changed_script }}
+          chmod +x $SCRIPT_FILE
           echo "shell: $0"
           echo "# ShellSpec Result" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
