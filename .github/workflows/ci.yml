@@ -24,7 +24,7 @@ jobs:
           list-files: json
           filters: |
             changed:
-              - '*_script*/*.sh'
+              - '**/*.sh'
 
       - name: Extract changed files
         id: changes
